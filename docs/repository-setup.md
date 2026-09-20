@@ -25,9 +25,10 @@ language-specific checks to the same workflow when the Rust crate is created.
 2. Add the repository in Codecov.
 3. Copy its repository upload token.
 4. Add a GitHub Actions repository secret named `CODECOV_TOKEN`.
-5. Keep `codecov.yml` at the repository root. It requires 80% patch coverage
+5. Keep `codecov.yml` at the repository root. It requires 70% patch coverage
    and allows the overall project coverage to fall by at most one percentage
-   point.
+   point. The JavaScript test command separately enforces 80% line and
+   statement coverage, 60% branch coverage, and 70% function coverage.
 6. Optionally make the resulting Codecov project and patch checks required in
    the `main` branch protection rule.
 
