@@ -68,6 +68,11 @@ DAB response envelopes.
 - [Rust](sdks/rust/README.md) - directory and design boundary reserved for the
   future crate
 
+## Examples
+
+- [Todo web app](examples/todo-app/README.md) - a cozy browser app using the
+  JavaScript SDK with a local SQL Server 2025 and DAB environment
+
 ## Development and releases
 
 Pull requests and pushes to `main` run unit coverage, npm package inspection,

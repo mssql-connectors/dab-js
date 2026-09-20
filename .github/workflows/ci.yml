@@ -30,6 +30,11 @@ jobs:
       - run: npm ci
       - run: npm run test:coverage
       - run: npm run check:package
+      - name: Build todo example
+        working-directory: examples/todo-app
+        run: |
+          npm ci
+          npm run build
       - uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != '' }}
         env:
