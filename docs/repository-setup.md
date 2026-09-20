@@ -34,7 +34,9 @@ language-specific checks to the same workflow when the Rust crate is created.
 The repository is public, so Codecov can support tokenless uploads in some
 cases. The explicit token is still configured for reliable uploads from the
 main repository. GitHub does not pass repository secrets to untrusted fork
-workflows; Codecov handles public fork pull requests through its fork flow.
+workflows; Codecov handles public fork pull requests through its fork flow. The
+upload step is skipped until `CODECOV_TOKEN` exists, while tests and local
+coverage thresholds continue to run.
 
 ## Release Please
 
