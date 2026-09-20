@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Cozy database mug</title>
+  <desc id="description">A warm mug shaped like a database with API steam.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#13243a"/>
+      <stop offset="1" stop-color="#243d53"/>
+    </linearGradient>
+    <linearGradient id="mug" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2b36f"/>
+      <stop offset="1" stop-color="#d97855"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <circle cx="108" cy="104" r="6" fill="#f8e7c4" opacity=".6"/>
+  <circle cx="414" cy="128" r="9" fill="#f8e7c4" opacity=".35"/>
+  <path d="M188 156c-31-27 32-38 3-72M257 148c-29-31 31-43 0-75M325 156c-28-26 31-38 5-70" fill="none" stroke="#f8e7c4" stroke-width="13" stroke-linecap="round"/>
+  <path d="M148 207h221v129c0 64-48 99-110 99s-111-35-111-99z" fill="url(#mug)"/>
+  <path d="M368 240h24c46 0 61 34 61 67 0 43-27 73-76 73h-20" fill="none" stroke="#d97855" stroke-width="28" stroke-linecap="round"/>
+  <ellipse cx="259" cy="211" rx="111" ry="38" fill="#f7ce91"/>
+  <ellipse cx="259" cy="211" rx="82" ry="22" fill="#5a382d"/>
+  <path d="M177 274c48 27 116 27 164 0M177 330c48 27 116 27 164 0" fill="none" stroke="#f8e7c4" stroke-width="10" stroke-linecap="round" opacity=".88"/>
+  <path d="M220 384h78" stroke="#f8e7c4" stroke-width="10" stroke-linecap="round" opacity=".88"/>
+</svg>

@@ -1,0 +1,51 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
+        with:
+          ref: ${{ steps.release.outputs['sdks--javascript--tag_name'] }}
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: sdks/javascript/package-lock.json
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+        if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
+        working-directory: sdks/javascript
+
+      - run: npm test
+        if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
+        working-directory: sdks/javascript
+
+      - run: npm publish
+        if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
+        working-directory: sdks/javascript
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

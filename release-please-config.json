@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "d406e114929c54fef00f21447f384651f40f9db6",
+  "packages": {
+    "sdks/javascript": {
+      "release-type": "node",
+      "package-name": "@azure/data-api-builder-js",
+      "component": "javascript",
+      "include-component-in-tag": true,
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}

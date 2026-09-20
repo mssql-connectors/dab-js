@@ -41,7 +41,7 @@ test("builds composite key paths and follows nextLink", async () => {
     .key({ orderId: 12, lineId: 3 })
     .getOne();
   assert.equal(fake.calls[0].url, "https://example.test/api/orderItems/orderId/12/lineId/3");
-  assert.deepEqual(page.value, [{ id: 1 }]);
+  assert.deepEqual(page.value, { id: 1 });
 });
 
 test("sends JSON mutations and reports failures without throwing by default", async () => {

@@ -256,7 +256,11 @@ class EntityQuery<T> extends QueryFilters {
 
   private async requestSingle(): Promise<DabSingle<T>> {
     const result = await this.client.request<T>(this.buildUrl(true), { method: "GET" }, this.shouldThrow);
-    return result.ok ? { ok: true, value: result.value ?? null } : result;
+    if (!result.ok) {
+      return result;
+    }
+    const value = Array.isArray(result.value) ? result.value[0] : result.value;
+    return { ok: true, value: value ?? null };
   }
 
   private async mutate(method: string, body: unknown, requiresKey: boolean): Promise<DabMutation<T>> {

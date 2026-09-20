@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">DAB reading nook</title>
+  <desc id="description">An open code book lit by a database-shaped lamp.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#182a3d"/>
+      <stop offset="1" stop-color="#304a51"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#ffd99a" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#ffd99a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <circle cx="338" cy="188" r="154" fill="url(#glow)"/>
+  <path d="M82 394h348" stroke="#bd6d52" stroke-width="22" stroke-linecap="round"/>
+  <path d="M100 284c63-25 117-12 156 25v111c-43-39-94-49-156-24z" fill="#f7e5bd"/>
+  <path d="M412 284c-63-25-117-12-156 25v111c43-39 94-49 156-24z" fill="#fff2d5"/>
+  <path d="M256 309v111" stroke="#d59d67" stroke-width="8"/>
+  <path d="M134 327h72M126 354h92M305 327h73M294 354h91" stroke="#d97855" stroke-width="9" stroke-linecap="round"/>
+  <path d="M342 110v107" stroke="#f7e5bd" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="342" cy="118" rx="57" ry="21" fill="#f2b36f"/>
+  <path d="M285 118v55c0 15 26 27 57 27s57-12 57-27v-55" fill="#d97855"/>
+  <ellipse cx="342" cy="118" rx="57" ry="21" fill="#f6c885"/>
+  <path d="M301 151c25 14 57 14 82 0" fill="none" stroke="#f8e7c4" stroke-width="7" stroke-linecap="round"/>
+  <path d="M342 217v34M319 251h46" stroke="#f7e5bd" stroke-width="12" stroke-linecap="round"/>
+</svg>
