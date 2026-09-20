@@ -270,6 +270,3 @@ Release Please manages versions, changelogs, GitHub releases, and npm
 publication. Maintainer setup for Codecov, Release Please, npm credentials, and
 required checks is documented in
 [`docs/repository-setup.md`](../../docs/repository-setup.md).
-
-Original repository image concepts are available under
-[`assets/profile-options`](../../assets/profile-options/README.md).

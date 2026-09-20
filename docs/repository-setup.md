@@ -13,7 +13,7 @@ rule:
 - `DAB integration`
 
 Both run for pull requests and for pushes to `main`. The JavaScript integration
-job starts SQL Server 2022 and DAB 2.0.12 in disposable containers, creates its
+job starts SQL Server 2025 and DAB 2.0.12 in disposable containers, creates its
 own sample database, runs the SDK against DAB's REST endpoint, and removes the
 containers. It does not need a persistent database or database secret. Add
 language-specific checks to the same workflow when the Rust crate is created.

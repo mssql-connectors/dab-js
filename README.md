@@ -77,6 +77,3 @@ SDK is an independent build and release unit under `sdks`.
 Release Please manages versions and changelogs. Maintainer setup for Codecov,
 Release Please, npm publishing, repository permissions, and required checks is
 documented in [Repository setup](docs/repository-setup.md).
-
-Original repository image concepts are available under
-[assets/profile-options](assets/profile-options/README.md).
