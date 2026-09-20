@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit and package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdks/javascript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: sdks/javascript/package-lock.json
+      - run: npm ci
+      - run: npm run test:coverage
+      - run: npm run check:package
+      - name: Build todo example
+        working-directory: examples/todo-app
+        run: |
+          npm ci
+          npm run build
+      - uses: codecov/codecov-action@v5
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: ./sdks/javascript/coverage/lcov.info
+          fail_ci_if_error: true
+          token: ${{ env.CODECOV_TOKEN }}
+
+  integration:
+    name: DAB integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: sdks/javascript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: sdks/javascript/package-lock.json
+      - run: npm ci
+      - name: Start SQL Server
+        working-directory: sdks/javascript/integration
+        env:
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: docker compose up --detach --wait mssql
+      - name: Create integration database
+        working-directory: sdks/javascript/integration
+        env:
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: |
+          docker compose exec -T mssql \
+            /opt/mssql-tools18/bin/sqlcmd \
+            -C -S localhost -U sa -P "$MSSQL_SA_PASSWORD" \
+            < schema.sql
+      - name: Start DAB
+        working-directory: sdks/javascript/integration
+        env:
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: |
+          docker compose up --detach dab
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:5000/api/books > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs dab
+          exit 1
+      - run: npm run test:integration
+        env:
+          DAB_URL: http://localhost:5000/api
+      - name: Show container logs
+        if: failure()
+        working-directory: sdks/javascript/integration
+        env:
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: docker compose logs
+      - name: Stop containers
+        if: always()
+        working-directory: sdks/javascript/integration
+        env:
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: docker compose down --volumes

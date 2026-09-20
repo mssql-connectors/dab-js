@@ -1,0 +1,26 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  dab:
+    image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
+    environment:
+      MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=Library;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=true;"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./dab-config.json:/App/dab-config.json:ro
+    depends_on:
+      mssql:
+        condition: service_healthy

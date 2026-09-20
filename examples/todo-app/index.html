@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <title>Cozy Todos</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <div>
+          <p class="eyebrow">DAB Native SDK</p>
+          <h1>Cozy todos</h1>
+          <p class="subtitle">A small task list backed by SQL Server and Data API builder.</p>
+        </div>
+        <div class="status" id="connection-status" role="status">
+          <span class="status-dot"></span>
+          <span>Connecting</span>
+        </div>
+      </header>
+
+      <section class="composer" aria-labelledby="add-task-heading">
+        <h2 id="add-task-heading">What needs doing?</h2>
+        <form id="todo-form">
+          <label class="sr-only" for="todo-title">New task</label>
+          <input
+            id="todo-title"
+            name="title"
+            type="text"
+            maxlength="200"
+            placeholder="Add a thoughtful little task..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Add task</button>
+        </form>
+      </section>
+
+      <section class="todos" aria-labelledby="tasks-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Today</p>
+            <h2 id="tasks-heading">Your tasks</h2>
+          </div>
+          <span id="task-count" class="task-count">0 tasks</span>
+        </div>
+        <div id="error-message" class="error-message" role="alert" hidden></div>
+        <ul id="todo-list" aria-live="polite"></ul>
+        <div id="empty-state" class="empty-state">
+          <span aria-hidden="true">✓</span>
+          <h3>Nothing on the list</h3>
+          <p>Add a task above and make a little room in your head.</p>
+        </div>
+      </section>
+    </main>
+
+    <template id="todo-template">
+      <li class="todo-item">
+        <label>
+          <input class="todo-toggle" type="checkbox" />
+          <span class="checkmark" aria-hidden="true"></span>
+          <span class="todo-title"></span>
+        </label>
+        <button class="delete-button" type="button" aria-label="Delete task">Delete</button>
+      </li>
+    </template>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
