@@ -1,0 +1,19 @@
+{
+  "name": "dab-schema-browser-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "dab:down": "docker compose -f dab/docker-compose.yml down --volumes",
+    "dab:up": "docker compose -f dab/docker-compose.yml up --detach --wait",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@azure/data-api-builder-js": "file:../../sdks/javascript"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^7.1.7"
+  }
+}

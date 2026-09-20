@@ -35,6 +35,11 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Build schema browser example
+        working-directory: examples/schema-browser
+        run: |
+          npm ci
+          npm run build
       - uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != '' }}
         env:
@@ -101,4 +106,34 @@ jobs:
         working-directory: sdks/javascript/integration
         env:
           MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: docker compose down --volumes
+      - name: Start schema browser stack
+        working-directory: examples/schema-browser/dab
+        run: docker compose up --detach --wait
+      - name: Verify schema browser catalog
+        working-directory: examples/schema-browser/dab
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:5001/api/databaseObjects > /dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://localhost:5001/api/databaseColumns > /dev/null
+          curl --fail --silent http://localhost:5001/api/databaseIndexes > /dev/null
+          curl --fail --silent http://localhost:5001/api/databaseRelationships > /dev/null
+          if docker compose exec -T mssql \
+            /opt/mssql-tools18/bin/sqlcmd -C -S localhost \
+            -U dab_schema_reader -P 'DabSchema_reader_2025!' \
+            -d SchemaBrowser -b -Q 'SELECT TOP 1 * FROM sales.Customers'; then
+            echo "Read-only principal unexpectedly read a business table"
+            exit 1
+          fi
+      - name: Show schema browser logs
+        if: failure()
+        working-directory: examples/schema-browser/dab
+        run: docker compose logs
+      - name: Stop schema browser stack
+        if: always()
+        working-directory: examples/schema-browser/dab
         run: docker compose down --volumes

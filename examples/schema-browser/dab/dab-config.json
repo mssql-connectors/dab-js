@@ -1,0 +1,53 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('MSSQL_CONNECTION_STRING')"
+  },
+  "runtime": {
+    "host": {
+      "mode": "development"
+    },
+    "rest": {
+      "enabled": true,
+      "path": "/api"
+    },
+    "graphql": {
+      "enabled": false
+    }
+  },
+  "entities": {
+    "databaseObjects": {
+      "source": {
+        "object": "catalog.DatabaseObjects",
+        "type": "view",
+        "key-fields": ["objectId"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    },
+    "databaseColumns": {
+      "source": {
+        "object": "catalog.DatabaseColumns",
+        "type": "view",
+        "key-fields": ["objectId", "columnId"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    },
+    "databaseIndexes": {
+      "source": {
+        "object": "catalog.DatabaseIndexes",
+        "type": "view",
+        "key-fields": ["objectId", "indexId"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    },
+    "databaseRelationships": {
+      "source": {
+        "object": "catalog.DatabaseRelationships",
+        "type": "view",
+        "key-fields": ["foreignKeyId", "columnOrdinal"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    }
+  }
+}
