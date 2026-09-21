@@ -83,7 +83,7 @@ docs: explain cursor pagination
 ## npm publishing
 
 The package is configured as the public scoped package
-`@mssql-connectors/data-api-builder-js`. Before the first release:
+`@mssql-connectors/dab-js`. Before the first release:
 
 1. Confirm that the package name and the `@mssql-connectors` npm scope are available to
    this repository's maintainers.

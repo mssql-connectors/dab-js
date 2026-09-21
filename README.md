@@ -7,7 +7,7 @@ a separate package for a future Rust SDK.
 
 ```text
 sdks/
-├── javascript/   # @mssql-connectors/data-api-builder-js
+├── javascript/   # @mssql-connectors/dab-js
 └── rust/         # Future Rust crate
 ```
 
@@ -64,7 +64,7 @@ DAB response envelopes.
 ## SDKs
 
 - [JavaScript and TypeScript](sdks/javascript/README.md) - implemented, tested,
-  and packaged as `@mssql-connectors/data-api-builder-js`
+  and packaged as `@mssql-connectors/dab-js`
 - [Rust](sdks/rust/README.md) - directory and design boundary reserved for the
   future crate
 
