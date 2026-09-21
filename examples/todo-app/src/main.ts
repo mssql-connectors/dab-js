@@ -1,4 +1,4 @@
-import { createDabClient, type DabFailure } from "@azure/data-api-builder-js";
+import { createDabClient, type DabFailure } from "@mssql-connectors/data-api-builder-js";
 
 type Todo = {
   id: string;
