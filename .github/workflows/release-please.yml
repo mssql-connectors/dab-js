@@ -28,10 +28,10 @@ jobs:
         with:
           ref: ${{ steps.release.outputs['sdks--javascript--tag_name'] }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: sdks/javascript/package-lock.json
           registry-url: https://registry.npmjs.org
@@ -47,5 +47,3 @@ jobs:
       - run: npm publish
         if: ${{ steps.release.outputs['sdks--javascript--release_created'] == 'true' }}
         working-directory: sdks/javascript
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
