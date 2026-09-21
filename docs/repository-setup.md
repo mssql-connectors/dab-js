@@ -82,33 +82,22 @@ docs: explain cursor pagination
 
 ## npm publishing
 
-The package is configured as the public scoped package
-`@mssql-connectors/dab-js`. Before the first release:
+The package is published publicly as `@mssql-connectors/dab-js`. Releases use
+npm trusted publishing rather than a long-lived access token:
 
-1. Confirm that the package name and the `@mssql-connectors` npm scope are available to
-   this repository's maintainers.
-2. Choose the package license and add the matching `license` field and license
-   file. This repository intentionally does not guess an organizational legal
-   choice.
-3. Create a granular npm access token that can publish packages in the
-   `@mssql-connectors` scope. Limit it to this package when npm permits package-level
-   selection, enable read and write package permissions, and set an expiration
-   that matches the organization's rotation policy.
-4. Add it as a GitHub Actions repository secret named `NPM_TOKEN`.
-5. Merge a Conventional Commit and then merge the Release Please release pull
-   request.
+- The npm trusted publisher is bound to `mssql-connectors/dab-js` and
+  `.github/workflows/release-please.yml`.
+- The workflow grants `id-token: write` and publishes with npm 11 on Node.js 24.
+- npm publishing access requires two-factor authentication and disallows
+  traditional publish tokens.
 
-After the first npm publication, trusted publishing is preferred over the
-long-lived token:
+The workflow filename must continue to match the npm trusted publisher
+configuration exactly. If it changes, delete and recreate the connection in the
+package settings on npmjs.com.
 
-1. In the package settings on npmjs.com, add a GitHub Actions trusted publisher.
-2. Set organization or user to the repository owner, repository to `dab-js`,
-   and workflow filename to `release-please.yml`.
-3. Remove `NODE_AUTH_TOKEN` from the publish step and delete `NPM_TOKEN`. The
-   workflow already grants the `id-token: write` permission trusted publishing
-   requires.
-4. Optionally configure npm publishing access to require two-factor
-   authentication and disallow traditional tokens.
+Choose the package license and add the matching `license` field and license file
+before broader adoption. This repository intentionally does not guess an
+organizational legal choice.
 
 The package metadata includes the repository URL and public access setting.
 `npm run check:package`, run from `sdks/javascript`, builds the package and
