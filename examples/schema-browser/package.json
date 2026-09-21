@@ -9,7 +9,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@mssql-connectors/data-api-builder-js": "file:../../sdks/javascript"
+    "@mssql-connectors/dab-js": "file:../../sdks/javascript"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

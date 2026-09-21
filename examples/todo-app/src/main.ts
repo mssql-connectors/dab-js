@@ -1,4 +1,4 @@
-import { createDabClient, type DabFailure } from "@mssql-connectors/data-api-builder-js";
+import { createDabClient, type DabFailure } from "@mssql-connectors/dab-js";
 
 type Todo = {
   id: string;
