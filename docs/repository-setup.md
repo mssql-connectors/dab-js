@@ -83,15 +83,15 @@ docs: explain cursor pagination
 ## npm publishing
 
 The package is configured as the public scoped package
-`@azure/data-api-builder-js`. Before the first release:
+`@mssql-connectors/data-api-builder-js`. Before the first release:
 
-1. Confirm that the package name and the `@azure` npm scope are available to
+1. Confirm that the package name and the `@mssql-connectors` npm scope are available to
    this repository's maintainers.
 2. Choose the package license and add the matching `license` field and license
    file. This repository intentionally does not guess an organizational legal
    choice.
 3. Create a granular npm access token that can publish packages in the
-   `@azure` scope. Limit it to this package when npm permits package-level
+   `@mssql-connectors` scope. Limit it to this package when npm permits package-level
    selection, enable read and write package permissions, and set an expiration
    that matches the organization's rotation policy.
 4. Add it as a GitHub Actions repository secret named `NPM_TOKEN`.

@@ -4,7 +4,7 @@
   "packages": {
     "sdks/javascript": {
       "release-type": "node",
-      "package-name": "@azure/data-api-builder-js",
+      "package-name": "@mssql-connectors/data-api-builder-js",
       "component": "javascript",
       "include-component-in-tag": true,
       "changelog-path": "CHANGELOG.md"

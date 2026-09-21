@@ -1,5 +1,5 @@
 {
-  "name": "@azure/data-api-builder-js",
+  "name": "@mssql-connectors/data-api-builder-js",
   "version": "0.1.0",
   "description": "A small fluent JavaScript client for Microsoft Data API builder.",
   "keywords": [

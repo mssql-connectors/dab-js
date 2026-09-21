@@ -1,6 +1,6 @@
 # DAB todo app
 
-A small browser app that uses `@azure/data-api-builder-js` for list, create,
+A small browser app that uses `@mssql-connectors/data-api-builder-js` for list, create,
 update, and delete operations against a real DAB REST API.
 
 ## Run locally

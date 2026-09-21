@@ -7,7 +7,7 @@ that make DAB different: entities, primary-key paths, OData-style filters,
 cursor pagination, and response envelopes.
 
 ```ts
-import { createDabClient } from "@azure/data-api-builder-js";
+import { createDabClient } from "@mssql-connectors/data-api-builder-js";
 
 const dab = createDabClient("https://localhost:5001/api", {
   headers: {
@@ -86,7 +86,7 @@ to travel them.
 ## Installation
 
 ```sh
-npm install @azure/data-api-builder-js
+npm install @mssql-connectors/data-api-builder-js
 ```
 
 The package targets modern JavaScript runtimes with the standard `fetch` API.
