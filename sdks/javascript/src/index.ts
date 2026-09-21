@@ -350,7 +350,8 @@ export class DabClient {
   }
 
   async request<T>(url: string, init: RequestInitWithBody, throwOnError = this.defaultThrow): Promise<(DabMutation<T> & { raw?: unknown }) | (DabFailure & { raw?: unknown })> {
-    const response = await this.fetcher(url, {
+    const fetcher = this.fetcher;
+    const response = await fetcher(url, {
       ...init,
       headers: { ...this.headers, ...(init.headers ?? {}), ...(init.body === undefined ? {} : { "Content-Type": "application/json" }) }
     });

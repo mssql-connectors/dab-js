@@ -73,3 +73,21 @@ test("groups and negates filters", async () => {
     "(title eq 'Dune' or (title eq 'Foundation')) and not (available eq false)"
   );
 });
+
+test("calls fetch without binding it to the client", async () => {
+  let receiver;
+  const fetch = async function () {
+    receiver = this;
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ value: [] })
+    };
+  };
+
+  await createDabClient("https://example.test/api", { fetch })
+    .entity("books")
+    .get();
+
+  assert.equal(receiver, undefined);
+});

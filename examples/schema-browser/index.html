@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <title>DAB Schema Browser</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <div>
+          <p class="eyebrow">DAB Native SDK</p>
+          <h1>Schema browser</h1>
+          <p class="subtitle">Read-only database structure, safely exposed through Data API builder.</p>
+        </div>
+        <div id="connection-status" class="status" role="status">
+          <span class="status-dot"></span>
+          <span>Connecting</span>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <aside class="sidebar" aria-label="Database objects">
+          <label class="search">
+            <span class="sr-only">Search tables and views</span>
+            <input id="search" type="search" placeholder="Search objects..." autocomplete="off" />
+          </label>
+          <nav id="schema-list" class="schema-list" aria-label="Schemas"></nav>
+        </aside>
+
+        <section class="content" aria-live="polite">
+          <div id="error-message" class="error-message" role="alert" hidden></div>
+          <div id="welcome" class="welcome">
+            <span aria-hidden="true">▤</span>
+            <h2>Choose a table or view</h2>
+            <p>Browse columns, indexes, and relationships without exposing table data.</p>
+          </div>
+
+          <article id="object-detail" hidden>
+            <div class="object-heading">
+              <div>
+                <p id="object-type" class="eyebrow"></p>
+                <h2 id="object-name"></h2>
+                <p id="object-meta" class="muted"></p>
+              </div>
+              <span class="readonly-badge">Read only</span>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Object details">
+              <button role="tab" aria-selected="true" data-tab="columns">Columns</button>
+              <button role="tab" aria-selected="false" data-tab="indexes">Indexes</button>
+              <button role="tab" aria-selected="false" data-tab="relationships">Relationships</button>
+            </div>
+
+            <section id="columns-panel" class="tab-panel"></section>
+            <section id="indexes-panel" class="tab-panel" hidden></section>
+            <section id="relationships-panel" class="tab-panel" hidden></section>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <template id="schema-template">
+      <section class="schema-group">
+        <button class="schema-toggle" type="button" aria-expanded="true">
+          <span class="chevron" aria-hidden="true">⌄</span>
+          <span class="schema-name"></span>
+          <span class="schema-count"></span>
+        </button>
+        <div class="object-list"></div>
+      </section>
+    </template>
+
+    <template id="object-template">
+      <button class="object-button" type="button">
+        <span class="object-icon" aria-hidden="true"></span>
+        <span class="object-label"></span>
+      </button>
+    </template>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
