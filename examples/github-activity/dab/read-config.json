@@ -1,0 +1,37 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('MSSQL_CONNECTION_STRING')"
+  },
+  "runtime": {
+    "host": { "mode": "production" },
+    "rest": { "enabled": true, "path": "/api" },
+    "graphql": { "enabled": false }
+  },
+  "entities": {
+    "contributionTimeline": {
+      "source": {
+        "object": "dbo.ContributionTimeline",
+        "type": "view",
+        "key-fields": ["eventId"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    },
+    "openContributions": {
+      "source": {
+        "object": "dbo.OpenContributions",
+        "type": "view",
+        "key-fields": ["id"]
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    },
+    "syncStatus": {
+      "source": {
+        "object": "dbo.GitHubSyncState",
+        "type": "table"
+      },
+      "permissions": [{ "role": "anonymous", "actions": ["read"] }]
+    }
+  }
+}

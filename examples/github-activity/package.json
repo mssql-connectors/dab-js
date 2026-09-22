@@ -1,0 +1,24 @@
+{
+  "name": "dab-github-activity-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:sdk && tsc && vite build && node --check server.mjs && node --check sync.mjs",
+    "build:sdk": "npm --prefix ../../sdks/javascript run build",
+    "pretest": "npm run build:sdk",
+    "prestack:up": "npm run build",
+    "stack:down": "docker compose -p dab-github-activity -f dab/docker-compose.yml down",
+    "stack:up": "docker compose -p dab-github-activity -f dab/docker-compose.yml up --detach --build --wait",
+    "start": "node server.mjs",
+    "sync": "node server.mjs --sync-once",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@mssql-connectors/dab-js": "file:../../sdks/javascript"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^7.1.7"
+  }
+}

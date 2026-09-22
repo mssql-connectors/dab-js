@@ -1,0 +1,89 @@
+services:
+  database-init:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    environment:
+      GITHUB_READ_PASSWORD: "${GITHUB_READ_PASSWORD:?Set GITHUB_READ_PASSWORD}"
+      GITHUB_SYNC_PASSWORD: "${GITHUB_SYNC_PASSWORD:?Set GITHUB_SYNC_PASSWORD}"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD}"
+    networks: [default]
+    volumes:
+      - ./schema.sql:/schema.sql:ro
+    command:
+      - /bin/bash
+      - -c
+      - |
+        for attempt in {1..30}; do
+          if /opt/mssql-tools18/bin/sqlcmd -C -S mssql -U sa -P "$$MSSQL_SA_PASSWORD" -l 5 -v GITHUB_SYNC_PASSWORD="$$GITHUB_SYNC_PASSWORD" GITHUB_READ_PASSWORD="$$GITHUB_READ_PASSWORD" -i /schema.sql; then
+            exit 0
+          fi
+          sleep 2
+        done
+        exit 1
+
+  sync-dab:
+    image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
+    restart: unless-stopped
+    environment:
+      MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=GitHubActivity;User Id=dab_github_sync;Password=${GITHUB_SYNC_PASSWORD:?Set GITHUB_SYNC_PASSWORD};TrustServerCertificate=true;"
+    networks: [default]
+    volumes:
+      - ./sync-config.json:/App/dab-config.json:ro
+    depends_on:
+      database-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:5000/api/threads?$$first=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  read-dab:
+    image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
+    restart: unless-stopped
+    environment:
+      MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=GitHubActivity;User Id=dab_github_read;Password=${GITHUB_READ_PASSWORD:?Set GITHUB_READ_PASSWORD};TrustServerCertificate=true;"
+    networks: [default]
+    volumes:
+      - ./read-config.json:/App/dab-config.json:ro
+    depends_on:
+      database-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:5000/api/contributionTimeline?$$first=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  dashboard:
+    build:
+      context: ../../..
+      dockerfile: examples/github-activity/Dockerfile
+    restart: unless-stopped
+    environment:
+      GITHUB_LOGIN: "${GITHUB_LOGIN:?Set GITHUB_LOGIN}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:?Set GITHUB_TOKEN}"
+      HOST: "0.0.0.0"
+      READ_DAB_URL: "http://read-dab:5000/api"
+      SYNC_DAB_URL: "http://sync-dab:5000/api"
+      SYNC_INTERVAL_MS: "${SYNC_INTERVAL_MS:-900000}"
+    networks: [default]
+    ports:
+      - "127.0.0.1:4177:4177"
+    depends_on:
+      sync-dab:
+        condition: service_healthy
+      read-dab:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4177/github/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+networks:
+  default:
+    external: true
+    name: dab-todo_default

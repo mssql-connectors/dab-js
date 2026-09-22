@@ -49,6 +49,19 @@ jobs:
           npm ci
           npm test
           npm run build
+      - name: Test GitHub activity example
+        working-directory: examples/github-activity
+        env:
+          GITHUB_LOGIN: test-user
+          GITHUB_READ_PASSWORD: GitHub-read-test-aA9!
+          GITHUB_SYNC_PASSWORD: GitHub-sync-test-aA9!
+          GITHUB_TOKEN: test-token
+          MSSQL_SA_PASSWORD: GitHub-ci-test-aA9!
+        run: |
+          npm ci
+          npm test
+          npm run build
+          docker compose -f dab/docker-compose.yml config --quiet
       - uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != '' }}
         env:
