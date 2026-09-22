@@ -145,6 +145,9 @@ jobs:
         run: docker compose down --volumes
       - name: Start chat stack
         working-directory: examples/chat-app
+        env:
+          DAB_CHAT_PASSWORD: ${{ format('Dab-chat-{0}!aA9', github.run_id) }}
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
         run: |
           npm ci
           npm --prefix ../todo-app run dab:up
@@ -172,6 +175,9 @@ jobs:
       - name: Stop chat stack
         if: always()
         working-directory: examples/chat-app
+        env:
+          DAB_CHAT_PASSWORD: ${{ format('Dab-chat-{0}!aA9', github.run_id) }}
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
         run: |
           npm run dab:down
           npm --prefix ../todo-app run dab:down

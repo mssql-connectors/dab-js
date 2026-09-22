@@ -20,10 +20,19 @@ From this directory:
 
 ```sh
 npm ci
+export MSSQL_SA_PASSWORD='replace-with-the-Todo-SQL-password'
+export DAB_CHAT_PASSWORD='replace-with-a-different-strong-password'
 npm --prefix ../todo-app run dab:up
 npm run dab:up
 npm start
 ```
+
+PowerShell users can set `$env:MSSQL_SA_PASSWORD` and
+`$env:DAB_CHAT_PASSWORD` instead. The latter creates a dedicated `dab_chat` SQL
+login and is never sent to the browser. That login can only select, insert, and
+delete rows in `ChatApp.dbo.Messages`, plus inspect that table's metadata so DAB
+can discover generated defaults; the DAB container does not connect as `sa`.
+The `sa` credential is used only by the one-shot schema initializer.
 
 Open <http://localhost:4175/chat> in two browser windows and send a message from
 either one. Stop the backend with:

@@ -2,18 +2,19 @@ services:
   database-init:
     image: mcr.microsoft.com/mssql/server:2025-latest
     environment:
-      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-DabTodo_local_2025!}"
+      DAB_CHAT_PASSWORD: "${DAB_CHAT_PASSWORD:?Set DAB_CHAT_PASSWORD}"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD}"
     volumes:
       - ./schema.sql:/schema.sql:ro
     command:
       - /bin/bash
       - -c
-      - /opt/mssql-tools18/bin/sqlcmd -C -S mssql -U sa -P "$$MSSQL_SA_PASSWORD" -i /schema.sql
+      - /opt/mssql-tools18/bin/sqlcmd -C -S mssql -U sa -P "$$MSSQL_SA_PASSWORD" -v DAB_CHAT_PASSWORD="$$DAB_CHAT_PASSWORD" -i /schema.sql
 
   dab:
     image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
     environment:
-      MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=ChatApp;User Id=sa;Password=${MSSQL_SA_PASSWORD:-DabTodo_local_2025!};TrustServerCertificate=true;"
+      MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=ChatApp;User Id=dab_chat;Password=${DAB_CHAT_PASSWORD:?Set DAB_CHAT_PASSWORD};TrustServerCertificate=true;"
     ports:
       - "5002:5000"
     volumes:
