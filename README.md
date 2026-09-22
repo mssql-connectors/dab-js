@@ -74,6 +74,8 @@ DAB response envelopes.
   JavaScript SDK with a local SQL Server 2025 and DAB environment
 - [WebSocket chat](examples/chat-app/README.md) - a Node.js middleware that
   persists through DAB and broadcasts messages to connected browsers
+- [GitHub contribution timeline](examples/github-activity/README.md) - a
+  private, read-only DAB dashboard for open authored and commented threads
 - [Schema browser](examples/schema-browser/README.md) - a read-only explorer for
   schemas, tables, views, columns, indexes, and relationships
 

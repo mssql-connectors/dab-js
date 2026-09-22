@@ -73,7 +73,7 @@ function formatValue(value: Primitive): string {
     return `'${value.replaceAll("'", "''")}'`;
   }
   if (value instanceof Date) {
-    return `'${value.toISOString()}'`;
+    return value.toISOString();
   }
   return String(value);
 }

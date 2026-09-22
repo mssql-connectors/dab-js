@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const param = new URLSearchParams(window.location.search).get("scoutTheme");
+        const theme =
+          param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    <title>GitHub Contribution Timeline</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">DAB activity dashboard</p>
+          <h1>GitHub contribution timeline</h1>
+          <p class="subtitle">Open issues and pull requests where you authored or actually participated.</p>
+        </div>
+        <div id="sync-status" class="sync-status" role="status">Loading sync status…</div>
+      </header>
+
+      <section class="summary" aria-label="Open contribution summary">
+        <article><strong id="thread-count">—</strong><span>Open threads</span></article>
+        <article><strong id="pr-count">—</strong><span>Pull requests</span></article>
+        <article><strong id="issue-count">—</strong><span>Issues</span></article>
+        <article><strong id="repository-count">—</strong><span>Repositories</span></article>
+      </section>
+
+      <section class="filters" aria-label="Timeline filters">
+        <label>
+          Repository
+          <select id="repository-filter">
+            <option value="">All repositories</option>
+          </select>
+        </label>
+        <label>
+          Type
+          <select id="type-filter">
+            <option value="">Issues and PRs</option>
+            <option value="pull_request">Pull requests</option>
+            <option value="issue">Issues</option>
+          </select>
+        </label>
+        <label>
+          Participation
+          <select id="participation-filter">
+            <option value="">Authored or commented</option>
+            <option value="authored">Authored</option>
+            <option value="commented">Commented or reviewed</option>
+          </select>
+        </label>
+        <label>
+          Date range
+          <select id="date-filter">
+            <option value="">All activity</option>
+            <option value="1d">Last 1 day</option>
+            <option value="1w">Last 1 week</option>
+            <option value="1m">Last 1 month</option>
+            <option value="3m">Last 3 months</option>
+            <option value="6m">Last 6 months</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="timeline-section" aria-labelledby="timeline-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Newest first</p>
+            <h2 id="timeline-heading">Activity</h2>
+          </div>
+          <span id="result-count">0 events</span>
+        </div>
+        <div id="error" class="error" role="alert" hidden></div>
+        <ol id="timeline"></ol>
+        <div id="empty" class="empty" hidden>No matching open contribution activity.</div>
+        <button id="load-more" type="button" hidden>Load more</button>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
