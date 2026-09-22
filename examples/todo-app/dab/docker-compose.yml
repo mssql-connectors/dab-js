@@ -4,6 +4,8 @@ services:
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-DabTodo_local_2025!}"
+    volumes:
+      - mssql-data:/var/opt/mssql
     healthcheck:
       test:
         - CMD-SHELL
@@ -38,3 +40,6 @@ services:
     depends_on:
       database-init:
         condition: service_completed_successfully
+
+volumes:
+  mssql-data:
