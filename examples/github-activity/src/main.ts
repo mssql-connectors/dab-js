@@ -40,13 +40,21 @@ const resultCount = getElement<HTMLSpanElement>("result-count");
 const repositoryFilter = getElement<HTMLSelectElement>("repository-filter");
 const typeFilter = getElement<HTMLSelectElement>("type-filter");
 const participationFilter = getElement<HTMLSelectElement>("participation-filter");
+const dateFilter = getElement<HTMLSelectElement>("date-filter");
 let page: DabPage<TimelineEvent> | undefined;
 let rendered = 0;
 
-for (const filter of [repositoryFilter, typeFilter, participationFilter]) {
-  filter.addEventListener("change", () => void loadTimeline(true));
+for (const filter of [repositoryFilter, typeFilter, participationFilter, dateFilter]) {
+  filter.addEventListener("change", () => refreshTimeline(true));
 }
-loadMore.addEventListener("click", () => void loadTimeline(false));
+loadMore.addEventListener("click", () => refreshTimeline(false));
+
+function refreshTimeline(reset: boolean): void {
+  void loadTimeline(reset).catch(reason => {
+    setError(reason instanceof Error ? reason.message : String(reason));
+    loadMore.disabled = false;
+  });
+}
 
 async function loadSummary(): Promise<void> {
   const contributions = await getAll<Contribution>("openContributions");
@@ -89,6 +97,8 @@ async function loadTimeline(reset: boolean): Promise<void> {
     if (typeFilter.value) query.where("itemType").eq(typeFilter.value);
     if (participationFilter.value === "authored") query.where("isAuthored").eq(true);
     if (participationFilter.value === "commented") query.where("isCommented").eq(true);
+    const cutoff = dateCutoff(dateFilter.value);
+    if (cutoff) query.where("occurredAt").gte(cutoff);
     page = await query
       .orderBy("occurredAt", "desc")
       .orderBy("eventId", "desc")
@@ -111,6 +121,17 @@ async function loadTimeline(reset: boolean): Promise<void> {
   empty.hidden = rendered !== 0;
   loadMore.hidden = !page.hasNextPage;
   loadMore.disabled = false;
+}
+
+function dateCutoff(range: string): Date | undefined {
+  if (!range) return;
+  const cutoff = new Date();
+  if (range === "1d") cutoff.setUTCDate(cutoff.getUTCDate() - 1);
+  if (range === "1w") cutoff.setUTCDate(cutoff.getUTCDate() - 7);
+  if (range === "1m") cutoff.setUTCMonth(cutoff.getUTCMonth() - 1);
+  if (range === "3m") cutoff.setUTCMonth(cutoff.getUTCMonth() - 3);
+  if (range === "6m") cutoff.setUTCMonth(cutoff.getUTCMonth() - 6);
+  return cutoff;
 }
 
 function renderEvent(event: TimelineEvent): HTMLLIElement {

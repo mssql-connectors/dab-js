@@ -69,4 +69,6 @@ separate least-privilege SQL login and DAB instance expose only:
 - `GitHubSyncState`
 
 The browser requests 50 timeline events at a time and follows DAB `nextLink`
-cursors through `page.next()`.
+cursors through `page.next()`. Repository, issue/PR type, participation, and
+one-day through six-month date ranges are applied as DAB filters before
+pagination.

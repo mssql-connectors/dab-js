@@ -98,7 +98,7 @@ h2 { font-size: 1.5rem; }
 .summary span { color: var(--cp-text-muted); }
 .filters {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 12px;
   border: 1px solid var(--cp-border);
   border-radius: 16px;

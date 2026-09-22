@@ -74,6 +74,19 @@ test("groups and negates filters", async () => {
   );
 });
 
+test("formats Date values as OData DateTimeOffset literals", async () => {
+  const fake = fakeFetch();
+  await createDabClient("https://example.test/api", { fetch: fake.fetch })
+    .entity("events")
+    .where("occurredAt").gte(new Date("2026-09-21T12:00:00.000Z"))
+    .get();
+
+  assert.equal(
+    new URL(fake.calls[0].url).searchParams.get("$filter"),
+    "occurredAt ge 2026-09-21T12:00:00.000Z"
+  );
+});
+
 test("calls fetch without binding it to the client", async () => {
   let receiver;
   const fetch = async function () {
