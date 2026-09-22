@@ -22,6 +22,10 @@ From this directory:
 npm ci
 export MSSQL_SA_PASSWORD='replace-with-the-Todo-SQL-password'
 export DAB_CHAT_PASSWORD='replace-with-a-different-strong-password'
+export COOKIE_SECURE=false
+export TURNSTILE_SITE_KEY='your-public-site-key'
+export TURNSTILE_SECRET_KEY='your-private-secret-key'
+export TURNSTILE_HOSTNAME='your-chat-hostname'
 npm --prefix ../todo-app run dab:up
 npm run dab:up
 npm start
@@ -33,6 +37,14 @@ login and is never sent to the browser. That login can only select, insert, and
 delete rows in `ChatApp.dbo.Messages`, plus inspect that table's metadata so DAB
 can discover generated defaults; the DAB container does not connect as `sa`.
 The `sa` credential is used only by the one-shot schema initializer.
+
+The middleware requires Cloudflare Turnstile keys. After the browser completes
+the managed challenge, `/chat/verify` validates its single-use token and issues
+a 15-minute, IP-bound, `HttpOnly`, `SameSite=Strict` session cookie. The
+WebSocket endpoint rejects upgrades without that cookie. The secret key remains
+server-side; only the public site key is returned to the browser.
+`COOKIE_SECURE=false` is for local HTTP development only; production defaults to
+secure cookies.
 
 Open <http://localhost:4175/chat> in two browser windows and send a message from
 either one. Stop the backend with:

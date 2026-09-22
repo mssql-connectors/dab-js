@@ -9,6 +9,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
 }
@@ -75,6 +79,15 @@ header > div > p:last-child {
   border: 1px solid #d9d0c3;
   border-radius: 20px;
   background: #fffdf9;
+}
+
+#verification {
+  align-self: center;
+  justify-self: center;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  text-align: center;
 }
 
 #messages:empty::after {

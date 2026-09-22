@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { generateGuestName, getClientIp, parseChatMessage } from "../server.mjs";
+import {
+  generateGuestName,
+  getClientIp,
+  parseChatMessage,
+  verifyTurnstile
+} from "../server.mjs";
 
 test("validates and normalizes incoming chat messages", () => {
   assert.deepEqual(
@@ -36,4 +41,36 @@ test("trusts Cloudflare client IPs only when configured", () => {
 
   assert.equal(getClientIp(request, true), "203.0.113.10");
   assert.equal(getClientIp(request, false), "127.0.0.1");
+});
+
+test("validates Turnstile action and hostname", async () => {
+  const fetcher = async () => ({
+    ok: true,
+    json: async () => ({ success: true, action: "chat", hostname: "todo.example" })
+  });
+
+  assert.equal(await verifyTurnstile({
+    token: "token",
+    secret: "secret",
+    remoteIp: "203.0.113.10",
+    expectedHostname: "todo.example",
+    expectedAction: "chat",
+    fetcher
+  }), true);
+  assert.equal(await verifyTurnstile({
+    token: "token",
+    secret: "secret",
+    remoteIp: "203.0.113.10",
+    expectedHostname: "other.example",
+    expectedAction: "chat",
+    fetcher
+  }), false);
+  assert.equal(await verifyTurnstile({
+    token: "token",
+    secret: "secret",
+    remoteIp: "203.0.113.10",
+    expectedHostname: "todo.example",
+    expectedAction: "other",
+    fetcher
+  }), false);
 });

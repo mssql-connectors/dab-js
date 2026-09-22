@@ -4,14 +4,43 @@ import { createDabClient } from "@mssql-connectors/dab-js";
 import WebSocket from "ws";
 
 const socketUrl = process.env.CHAT_URL ?? "ws://localhost:4175/chat/ws";
+const verifyUrl = process.env.CHAT_VERIFY_URL
+  ?? socketUrl.replace(/^ws/, "http").replace(/\/ws$/, "/verify");
+const origin = new URL(socketUrl);
+origin.protocol = origin.protocol === "wss:" ? "https:" : "http:";
+origin.pathname = "";
+const turnstileToken = process.env.TURNSTILE_TEST_TOKEN ?? "XXXX.DUMMY.TOKEN.XXXX";
 const dab = createDabClient(process.env.DAB_URL ?? "http://localhost:5002/api");
 
-function openClient(options) {
+async function openClient(options = {}) {
+  const headers = { ...options.headers };
+  headers.Cookie = await authorize(headers["CF-Connecting-IP"]);
+  headers.Origin = origin.origin;
+
   return new Promise((resolve, reject) => {
-    const socket = new WebSocket(socketUrl, options);
+    const socket = new WebSocket(socketUrl, { ...options, headers });
     socket.once("open", () => resolve(socket));
     socket.once("error", reject);
   });
+}
+
+async function authorize(ip) {
+  const verification = await fetch(verifyUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(ip
+        ? { "CF-Connecting-IP": ip }
+        : {})
+    },
+    body: JSON.stringify({ token: turnstileToken })
+  });
+  assert.equal(verification.status, 204);
+  const setCookie = verification.headers.get("set-cookie");
+  assert.match(setCookie, /HttpOnly/);
+  assert.match(setCookie, /SameSite=Strict/);
+  assert.match(setCookie, /Secure/);
+  return setCookie.split(";")[0];
 }
 
 function waitForMessage(socket, predicate) {
@@ -70,20 +99,46 @@ test("broadcasts a DAB-persisted message to connected clients", async () => {
   }
 });
 
+test("requires an IP-bound Turnstile session", {
+  skip: socketUrl.startsWith("wss://")
+}, async () => {
+  async function upgradeStatus(headers) {
+    return new Promise(resolve => {
+      const socket = new WebSocket(socketUrl, {
+        headers: { Origin: origin.origin, ...headers }
+      });
+      socket.once("unexpected-response", (_request, response) => resolve(response.statusCode));
+      socket.once("open", () => {
+        socket.close();
+        resolve(101);
+      });
+      socket.once("error", () => {});
+    });
+  }
+
+  assert.equal(await upgradeStatus({}), 401);
+  const cookie = await authorize("203.0.113.10");
+  assert.equal(await upgradeStatus({
+    Cookie: cookie,
+    "CF-Connecting-IP": "203.0.113.11"
+  }), 401);
+  assert.equal(await upgradeStatus({
+    Cookie: cookie,
+    "CF-Connecting-IP": "203.0.113.10"
+  }), 101);
+});
+
 test("limits concurrent sockets from one IP", {
   skip: socketUrl.startsWith("wss://")
 }, async () => {
   const sockets = [];
   const results = await Promise.all(Array.from({ length: 6 }, () =>
-    new Promise((resolve, reject) => {
-      const socket = new WebSocket(socketUrl, {
-        headers: { "CF-Connecting-IP": "203.0.113.10" }
-      });
-      sockets.push(socket);
-      socket.once("open", () => resolve(101));
-      socket.once("unexpected-response", (_request, response) => resolve(response.statusCode));
-      socket.once("error", reject);
-    })
+    openClient({ headers: { "CF-Connecting-IP": "203.0.113.10" } })
+      .then(socket => {
+        sockets.push(socket);
+        return 101;
+      })
+      .catch(error => error.message.includes("429") ? 429 : Promise.reject(error))
   ));
 
   assert.deepEqual(results.sort(), [101, 101, 101, 101, 101, 429]);
