@@ -40,6 +40,12 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Test chat example
+        working-directory: examples/chat-app
+        run: |
+          npm ci
+          npm test
+          npm run build
       - uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != '' }}
         env:
@@ -137,3 +143,35 @@ jobs:
         if: always()
         working-directory: examples/schema-browser/dab
         run: docker compose down --volumes
+      - name: Start chat stack
+        working-directory: examples/chat-app
+        run: |
+          npm ci
+          npm --prefix ../todo-app run dab:up
+          npm run dab:up
+      - name: Verify WebSocket chat
+        working-directory: examples/chat-app
+        env:
+          DAB_URL: http://localhost:5002/api
+        run: |
+          npm start > /tmp/dab-chat.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:4175/chat/ > /dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://localhost:4175/chat/ > /dev/null
+          npm run test:integration
+      - name: Show chat logs
+        if: failure()
+        working-directory: examples/chat-app
+        run: |
+          cat /tmp/dab-chat.log || true
+          docker compose -p dab-chat -f dab/docker-compose.yml logs
+      - name: Stop chat stack
+        if: always()
+        working-directory: examples/chat-app
+        run: |
+          npm run dab:down
+          npm --prefix ../todo-app run dab:down

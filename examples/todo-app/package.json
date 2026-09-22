@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "dab:down": "docker compose -f dab/docker-compose.yml down --volumes",
-    "dab:up": "docker compose -f dab/docker-compose.yml up --detach --wait",
+    "dab:down": "docker compose -p dab-todo -f dab/docker-compose.yml down --volumes",
+    "dab:up": "docker compose -p dab-todo -f dab/docker-compose.yml up --detach --wait",
     "dev": "vite"
   },
   "dependencies": {

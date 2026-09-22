@@ -1,0 +1,182 @@
+:root {
+  color-scheme: light dark;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  background: #f5f1ea;
+  color: #24211d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  width: min(760px, calc(100% - 32px));
+  min-height: 100vh;
+  margin: auto;
+  padding: 48px 0 24px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 24px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: start;
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: -0.06em;
+}
+
+.eyebrow {
+  color: #7a5c28;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+header > div > p:last-child {
+  margin-top: 8px;
+  color: #6f685f;
+}
+
+#status {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #e6ded2;
+  white-space: nowrap;
+}
+
+#status.connected {
+  color: #17643a;
+  background: #d9f0e2;
+}
+
+#messages {
+  min-height: 360px;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 20px;
+  list-style: none;
+  border: 1px solid #d9d0c3;
+  border-radius: 20px;
+  background: #fffdf9;
+}
+
+#messages:empty::after {
+  content: "No messages yet. Say hello.";
+  color: #777067;
+}
+
+#messages li + li {
+  margin-top: 18px;
+}
+
+#messages li div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+time {
+  color: #827b72;
+  font-size: 0.78rem;
+}
+
+#messages li p {
+  margin-top: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: #6f685f;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+input,
+button {
+  min-height: 44px;
+  border: 1px solid #cfc4b6;
+  border-radius: 12px;
+  font: inherit;
+}
+
+input {
+  padding: 0 12px;
+  background: #fffdf9;
+  color: #24211d;
+}
+
+button {
+  padding: 0 20px;
+  border-color: #5c4321;
+  background: #5c4321;
+  color: white;
+  cursor: pointer;
+}
+
+#error {
+  color: #a32626;
+}
+
+@media (max-width: 640px) {
+  main {
+    padding-top: 24px;
+  }
+
+  header,
+  form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  #status {
+    justify-self: start;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background: #181614;
+    color: #f7f0e6;
+  }
+
+  header > div > p:last-child,
+  label,
+  time {
+    color: #bcb2a6;
+  }
+
+  #status,
+  #messages,
+  input {
+    border-color: #4b433a;
+    background: #26221e;
+    color: #f7f0e6;
+  }
+}
