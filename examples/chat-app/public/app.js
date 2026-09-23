@@ -11,13 +11,24 @@ author.value = savedAuthor ?? "";
 
 let socket;
 let widgetId;
+let reconnectTimer;
 
 function joinChat() {
   verification.hidden = true;
   list.hidden = false;
   form.hidden = false;
   status.textContent = "Connecting";
+  clearTimeout(reconnectTimer);
   connect();
+}
+
+function requireVerification() {
+  verification.hidden = false;
+  list.hidden = true;
+  form.hidden = true;
+  status.textContent = "Verification required";
+  status.className = "";
+  if (widgetId !== undefined) window.turnstile.reset(widgetId);
 }
 
 async function verify(token) {
@@ -66,8 +77,18 @@ function connect() {
     status.className = "connected";
   });
   socket.addEventListener("close", () => {
-    status.textContent = "Disconnected";
+    status.textContent = "Reconnecting";
     status.className = "";
+    reconnectTimer = setTimeout(async () => {
+      try {
+        const response = await fetch("/chat/config", { cache: "no-store" });
+        const config = await response.json();
+        if (config.verified) connect();
+        else requireVerification();
+      } catch {
+        reconnectTimer = setTimeout(connect, 2000);
+      }
+    }, 1000);
   });
   socket.addEventListener("message", event => {
     const message = JSON.parse(event.data);
