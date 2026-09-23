@@ -13,6 +13,7 @@ services:
 
   dab:
     image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
+    restart: unless-stopped
     environment:
       MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=ChatApp;User Id=dab_chat;Password=${DAB_CHAT_PASSWORD:?Set DAB_CHAT_PASSWORD};TrustServerCertificate=true;"
     ports:
