@@ -72,6 +72,8 @@ DAB response envelopes.
 
 - [Todo web app](examples/todo-app/README.md) - a cozy browser app using the
   JavaScript SDK with a local SQL Server 2025 and DAB environment
+- [WebSocket chat](examples/chat-app/README.md) - a Node.js middleware that
+  persists through DAB and broadcasts messages to connected browsers
 - [Schema browser](examples/schema-browser/README.md) - a read-only explorer for
   schemas, tables, views, columns, indexes, and relationships
 

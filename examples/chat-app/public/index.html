@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAB WebSocket Chat</title>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+    <link rel="stylesheet" href="/chat/styles.css?v=1" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">DAB Native SDK</p>
+          <h1>WebSocket chat</h1>
+          <p>Messages persist through DAB and appear instantly for every connected browser.</p>
+        </div>
+        <span id="status" role="status">Verification required</span>
+      </header>
+
+      <section id="verification" aria-labelledby="verification-heading">
+        <h2 id="verification-heading">Verify to join</h2>
+        <p>Complete this quick check before connecting to the chat.</p>
+        <div id="turnstile-widget"></div>
+      </section>
+
+      <ol id="messages" aria-live="polite" hidden></ol>
+
+      <form id="composer" hidden>
+        <label>
+          Your name
+          <input id="author" maxlength="50" autocomplete="name" required />
+        </label>
+        <label class="message-field">
+          Message
+          <input id="body" maxlength="1000" autocomplete="off" required />
+        </label>
+        <button type="submit">Send</button>
+      </form>
+      <p id="error" role="alert" hidden></p>
+    </main>
+    <script type="module" src="/chat/app.js?v=1"></script>
+  </body>
+</html>

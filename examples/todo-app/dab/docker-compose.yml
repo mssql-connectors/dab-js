@@ -1,6 +1,7 @@
 services:
   mssql:
     image: mcr.microsoft.com/mssql/server:2025-latest
+    restart: unless-stopped
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-DabTodo_local_2025!}"
@@ -31,6 +32,7 @@ services:
 
   dab:
     image: mcr.microsoft.com/azure-databases/data-api-builder:2.0.12
+    restart: unless-stopped
     environment:
       MSSQL_CONNECTION_STRING: "Server=mssql,1433;Initial Catalog=TodoApp;User Id=sa;Password=${MSSQL_SA_PASSWORD:-DabTodo_local_2025!};TrustServerCertificate=true;"
     ports:

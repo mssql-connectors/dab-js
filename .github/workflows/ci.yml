@@ -40,6 +40,15 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Test chat example
+        working-directory: examples/chat-app
+        env:
+          TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+          TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+        run: |
+          npm ci
+          npm test
+          npm run build
       - uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != '' }}
         env:
@@ -137,3 +146,45 @@ jobs:
         if: always()
         working-directory: examples/schema-browser/dab
         run: docker compose down --volumes
+      - name: Start chat stack
+        working-directory: examples/chat-app
+        env:
+          DAB_CHAT_PASSWORD: ${{ format('Dab-chat-{0}!aA9', github.run_id) }}
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: |
+          npm ci
+          npm --prefix ../todo-app run dab:up
+          npm run dab:up
+      - name: Verify WebSocket chat
+        working-directory: examples/chat-app
+        env:
+          DAB_URL: http://localhost:5002/api
+          TRUST_CLOUDFLARE: "true"
+          TURNSTILE_ACTION: ""
+          TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+          TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+        run: |
+          npm start > /tmp/dab-chat.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:4175/chat/ > /dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://localhost:4175/chat/ > /dev/null
+          npm run test:integration
+      - name: Show chat logs
+        if: failure()
+        working-directory: examples/chat-app
+        run: |
+          cat /tmp/dab-chat.log || true
+          docker compose -p dab-chat -f dab/docker-compose.yml logs
+      - name: Stop chat stack
+        if: always()
+        working-directory: examples/chat-app
+        env:
+          DAB_CHAT_PASSWORD: ${{ format('Dab-chat-{0}!aA9', github.run_id) }}
+          MSSQL_SA_PASSWORD: ${{ format('Dab-ci-{0}!aA9', github.run_id) }}
+        run: |
+          npm run dab:down
+          npm --prefix ../todo-app run dab:down

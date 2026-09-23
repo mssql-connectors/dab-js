@@ -1,0 +1,22 @@
+{
+  "name": "dab-chat-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:sdk && node --check server.mjs && node --check public/app.js",
+    "build:sdk": "npm --prefix ../../sdks/javascript run build",
+    "dab:down": "docker compose -p dab-chat -f dab/docker-compose.yml down",
+    "dab:up": "docker compose -p dab-chat -f dab/docker-compose.yml up --detach --wait",
+    "prestart": "npm run build:sdk",
+    "pretest": "npm run build:sdk",
+    "pretest:integration": "npm run build:sdk",
+    "start": "node server.mjs",
+    "test": "node --test test/unit.test.mjs",
+    "test:integration": "node --test test/integration.test.mjs"
+  },
+  "dependencies": {
+    "@2toad/profanity": "3.3.0",
+    "@mssql-connectors/dab-js": "file:../../sdks/javascript",
+    "ws": "^8.18.3"
+  }
+}
